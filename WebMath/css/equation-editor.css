@@ -1,0 +1,67 @@
+.equation-editor-highlighted{background-color: yellow;}
+.equation-editor-current{color: red;}
+.equation-editor{border:1pt solid black;text-align: center;}
+.equation-editor:focus,.equation-editor:focus-within{border:1pt solid purple;}
+.equation-editor-stacked{position: relative;margin: 5pt;display: inline-block;}
+.equation-editor-selection{z-index: 0;position: absolute;border: 1pt solid orange;}
+.equation-editor-preview{left:0;top:0;z-index: 1;position: relative;font-size: 200%;}
+.equation-editor-anchor{width:1pt;z-index: 2;position: absolute;background-color: green;}
+.equation-editor-caret{width:1pt;z-index: 3;position: absolute;background-color: blue;}
+.equation-editor-hover{width:1pt;z-index: 4;position: absolute;background-color: red;}
+.equation-editor-toolbar{overflow:hidden;}
+.equation-editor-command button{padding: 0;border: 0;}
+.equation-editor-toolbar button{padding: 0;border: 0;width: 4em;height: 2em;}
+.equation-editor-placeholder{color: darkgray;}
+.equation-editor-exchange{width:0px;height: 0px;}
+.pixel {
+    position: absolute;
+    background: black;
+    width: 2px;
+    height: 2px;
+  }
+
+  html, body {
+    margin:0;
+    padding:0;
+    } 
+  #EquationEditor{
+    height:100%;width:100%;
+    position:fixed;
+    display: block;
+    margin-top:50px;
+    background: #F4F6FA;
+    color: #333333;
+    font-size:3em;
+    /* font-family: 'PingFangSC-Regular'; */
+    overflow:auto;
+    text-align: left;
+}
+/* #EquationViewer{
+  visibility: collapse;
+} */
+/* .mathFocus{font-size: 200%;} */
+.elementFocus{color:#3E5AFF;}
+.caretLeft{
+  border-left:2pt solid #3E5AFF;
+}
+.caretRight{
+  border-right:2pt solid #3E5AFF;
+}
+mjx-math
+{
+  margin:10px;
+  display: block;
+  line-height: 0;
+  position: relative;
+}
+
+mjx-math .mjx-n:nth-last-child(2),mjx-math .mjx-n:last-child {
+  color: #3E5AFF;
+}
+
+/* @font-face {
+  font-family: 'PingFangSC-Regular';
+  src: url('/Users/sunia1/Code/KsparkCalculate/sly_calculator/ios/Runner/webMath/css/fonts/PingFangSC-Regular.ttf');
+  font-family: 'PingFangSC-Bold';
+  src: url('/Users/sunia1/Code/KsparkCalculate/sly_calculator/ios/Runner/webMath/css/fonts/PingFangSC-Bold.ttf');
+} */
