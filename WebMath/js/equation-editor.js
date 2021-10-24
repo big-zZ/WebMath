@@ -116,7 +116,7 @@ var createEquationEditor = function(container) {
     function is_number(text) {
         var regPos = /^\d+(\.\d+)?$/; //非负浮点数
         var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
-        if(regPos.test(text) || regNeg.test(text)) {
+        if (regPos.test(text) || regNeg.test(text)) {
             return true;
         } else {
             return false;
@@ -344,7 +344,7 @@ var createEquationEditor = function(container) {
             _mathInfo[id].node.after(node);
             _mathInfo[id].node.remove();
             _mathInfo[id].node = node;
-            // change_focus_element(id, node.firstElementChild.lastElementChild);
+            change_focus_element(id, node.firstElementChild.lastElementChild);
 
             if (update) {
                 MathJax.startup.document.clear();
@@ -376,7 +376,7 @@ var createEquationEditor = function(container) {
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
             save_latex_result(latex, ratianResult, degreeResult, node);
-            // change_focus_element(_currentInputMath, node.firstElementChild.lastElementChild);
+            change_focus_element(_currentInputMath, node.firstElementChild.lastElementChild);
             //$(node).addClass('mathFocus');
 
             MathJax.startup.document.clear();
@@ -395,7 +395,7 @@ var createEquationEditor = function(container) {
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
             save_latex_result(latex, ratianResult, degreeResult, node, _currentInputMath);
-            // change_focus_element(_currentInputMath, node.firstElementChild.lastElementChild);
+            change_focus_element(_currentInputMath, node.firstElementChild.lastElementChild);
             //$(node).addClass('mathFocus');
 
             MathJax.startup.document.clear();
@@ -645,22 +645,22 @@ var createEquationEditor = function(container) {
             }
         }
         //显示光标
-    var _showCaret = 0;
-    setInterval(() => {
-        if (_currentInputMath < 0) return;
+        // var _showCaret = 0;
+        // setInterval(() => {
+        //     if (_currentInputMath < 0) return;
 
-        var focus = _mathInfo[_currentInputMath].focus;
-        var caret = _mathInfo[_currentInputMath].caret;
+    //     var focus = _mathInfo[_currentInputMath].focus;
+    //     var caret = _mathInfo[_currentInputMath].caret;
 
-        if (++_showCaret >= 30000)
-            _showCaret = 0;
+    //     if (++_showCaret >= 30000)
+    //         _showCaret = 0;
 
-        $('.caretRight').removeClass('caretRight');
-        $('.caretLeft').removeClass('caretLeft');
-        if (_showCaret % 2 == 0) {
-            (caret == 0) ? $(focus).addClass('caretLeft'): $(focus).addClass('caretRight');
-        }
-    }, 500);
+    //     $('.caretRight').removeClass('caretRight');
+    //     $('.caretLeft').removeClass('caretLeft');
+    //     if (_showCaret % 2 == 0) {
+    //         (caret == 0) ? $(focus).addClass('caretLeft'): $(focus).addClass('caretRight');
+    //     }
+    // }, 500);
     return {
         showMath: showMath,
         reshowLastMath: reshowLastMath,
@@ -677,11 +677,7 @@ var createEquationEditor = function(container) {
         setFocus: setFocus,
         changeFocusLeft: changeFocusLeft,
         changeFocusRight: changeFocusRight,
-        setDegreeMode,
-        setDegreeMode,
-        setPrecision,
-        setPrecision
-
-
+        setDegreeMode: setDegreeMode,
+        setPrecision: setPrecision
     };
 };
