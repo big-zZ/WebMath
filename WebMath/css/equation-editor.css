@@ -32,7 +32,6 @@
     background: #F4F6FA;
     color: #333333;
     font-size:3em;
-    /* font-family: 'PingFangSC-Regular'; */
     overflow:auto;
     text-align: left;
 }
@@ -59,9 +58,3 @@ mjx-math .mjx-n:nth-last-child(2),mjx-math .mjx-n:last-child {
   color: #3E5AFF;
 }
 
-/* @font-face {
-  font-family: 'PingFangSC-Regular';
-  src: url('/Users/sunia1/Code/KsparkCalculate/sly_calculator/ios/Runner/webMath/css/fonts/PingFangSC-Regular.ttf');
-  font-family: 'PingFangSC-Bold';
-  src: url('/Users/sunia1/Code/KsparkCalculate/sly_calculator/ios/Runner/webMath/css/fonts/PingFangSC-Bold.ttf');
-} */

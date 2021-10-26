@@ -295,7 +295,15 @@ var createEquationEditor = function(container) {
         var pow = Math.pow(10, _precision);
         if (_precisionMode == 0) {
             //去尾
-            r = Math.floor(result * pow) / pow;
+            var isInteger = Math.floor(result) === result;
+            if(isInteger == false) {
+                var res = result.toString();
+                var r_int = Math.floor(result).toString();
+                res = res.substr(0, r_int.length + 1 + _precision);
+                r = parseFloat(res);
+            } else {
+                r = result;
+            }
         } else if (_precisionMode == 1) {
             //四舍五入
             r = Math.round(result * pow) / pow;
