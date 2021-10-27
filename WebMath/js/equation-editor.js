@@ -11,6 +11,7 @@ var createEquationEditor = function(container) {
     //focus:聚焦的元素,
     //caret:光标类型，0-替换光标当前元素，1-在当前光标后面插入
     //modify:是否修改过 false/true
+    //type:公式类型  0-方程式 1-等式
     //}
     var _mathInfo = [];
 
@@ -113,6 +114,32 @@ var createEquationEditor = function(container) {
         return content;
     }
 
+    //查找问号占位符元素
+    function find_and_replace_mark(node) {
+
+        var f;
+        for (var i = 0; i < node.childElementCount; i++) {
+
+            var e = node.children[i];
+            if (e.tagName.toLowerCase() != 'mjx-c') {
+                f = find_and_replace_mark(e);
+            } else {
+                var str;
+                var before = window.getComputedStyle(e, '::before');
+                if (before)
+                    str = before.getPropertyValue('content');
+
+                if (str && str.indexOf('?') >= 0) {
+                    f = e.parentElement.nextElementSibling;
+                    e.parentElement.remove();
+                }
+
+            }
+            if (f) break;
+        }
+        return f;
+    }
+
     function is_number(text) {
         var regPos = /^\d+(\.\d+)?$/; //非负浮点数
         var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
@@ -123,16 +150,32 @@ var createEquationEditor = function(container) {
         }
     }
 
-    function change_focus_element(id, ele, result) {
-
-        var c = get_element_content(ele);
-        _mathInfo[id].caret = (c == '?') ? 0 : 1;
-        _mathInfo[id].focus = ele;
+    function change_focus_element(id, ele) {
 
         $('#' + id + ' .elementFocus').removeClass('elementFocus');
-        $(ele).addClass('elementFocus');
-        if (result) {
-            $(ele.previousElementSibling).addClass('elementFocus'); //=号也高亮       
+        if (_mathInfo[id].type == 0) {
+
+            if (ele) {
+                var c = get_element_content(ele);
+                _mathInfo[id].caret = (c == '?') ? 0 : 1;
+                _mathInfo[id].focus = ele;
+            } else {
+                //方程式，找到？号元素
+                _mathInfo[id].caret = 1;
+                _mathInfo[id].focus = find_and_replace_mark(_mathInfo[id].node.children[0]);
+            }
+            $(_mathInfo[id].focus).addClass('elementFocus');
+        } else {
+
+            if (ele) {
+                _mathInfo[id].focus = ele;
+                $(ele).addClass('elementFocus');
+            } else {
+                _mathInfo[id].focus = _mathInfo[id].node.firstElementChild.lastElementChild;
+                $(_mathInfo[id].focus).addClass('elementFocus');
+                $(_mathInfo[id].focus.previousElementSibling).addClass('elementFocus'); //=号也高亮 
+            }
+            _mathInfo[id].caret = 1;
         }
     }
 
@@ -313,7 +356,7 @@ var createEquationEditor = function(container) {
         var index = latex.indexOf('?');
         if (index >= 0) {
             //方程式
-            tex = latex.replace('?', r.toString());
+            tex = latex.replace('?', '?' + r.toString());
         } else {
             //等式
             tex = latex;
@@ -324,6 +367,8 @@ var createEquationEditor = function(container) {
     }
 
     function save_latex_result(latex, ratianResult, degreeResult, node, id) {
+
+        var type = (latex.indexOf('?') >= 0) ? 0 : 1; //0-方程式 1-等式
         if (id) {
             $(node).attr("id", id);
             _mathInfo[id].node.after(node);
@@ -333,11 +378,12 @@ var createEquationEditor = function(container) {
             _mathInfo[id].rResult = ratianResult;
             _mathInfo[id].dResult = degreeResult;
             _mathInfo[id].modify = false;
+            _mathInfo[id].type = type;
         } else {
             _mathId++;
             $(node).attr("id", _mathId);
             container.appendChild(node);
-            _mathInfo[_mathId] = { latex: latex, rResult: ratianResult, dResult: degreeResult, node: node, modify: false };
+            _mathInfo[_mathId] = { latex: latex, rResult: ratianResult, dResult: degreeResult, node: node, modify: false, type: type };
             _currentInputMath = _mathId;
         }
     }
@@ -349,11 +395,8 @@ var createEquationEditor = function(container) {
         MathJax.texReset();
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
-            $(node).attr("id", id);
-            _mathInfo[id].node.after(node);
-            _mathInfo[id].node.remove();
-            _mathInfo[id].node = node;
-            change_focus_element(id, node.firstElementChild.lastElementChild, true);
+            save_latex_result(_mathInfo[id].latex, _mathInfo[id].rResult, _mathInfo[id].dResult, node, id);
+            change_focus_element(id);
 
             if (update) {
                 MathJax.startup.document.clear();
@@ -378,6 +421,7 @@ var createEquationEditor = function(container) {
     //-------------------
 
     //外部函数---------------------
+    var __fistTime = true;
     var showMath = function(latex, ratianResult, degreeResult) {
         var tex = complete_formula(latex, degreeResult, ratianResult);
 
@@ -385,9 +429,16 @@ var createEquationEditor = function(container) {
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
             save_latex_result(latex, ratianResult, degreeResult, node);
-            change_focus_element(_currentInputMath, node.firstElementChild.lastElementChild, true);
+            if (__fistTime) {
+                //首次show，找？占位符有问题，要延迟一下
+                setTimeout(() => {
+                    change_focus_element(_currentInputMath);
+                }, 100);
+                __fistTime = false;
+            } else {
+                change_focus_element(_currentInputMath);
+            }
             //$(node).addClass('mathFocus');
-
             MathJax.startup.document.clear();
             MathJax.startup.document.updateDocument();
         }).catch(function(err) {
@@ -404,7 +455,7 @@ var createEquationEditor = function(container) {
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
             save_latex_result(latex, ratianResult, degreeResult, node, _currentInputMath);
-            change_focus_element(_currentInputMath, node.firstElementChild.lastElementChild, true);
+            change_focus_element(_currentInputMath);
             //$(node).addClass('mathFocus');
 
             MathJax.startup.document.clear();
