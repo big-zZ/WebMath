@@ -16,25 +16,30 @@
 <body onload="main();">
     <div id='EquationEditor'></div>
     <!--测试按钮-->
-    <button id='web_showLatex' onclick="javascript:showLatex();">web_showLatex</button>
-    <button id='web_keyboardInsert' onclick="javascript:keyboardInsert();">web_keyboardInsert</button>
-    <button id='web_keyboardDel' onclick="javascript:web_keyboardDel();">web_keyboardDel</button>
-    <button id='web_getRect' onclick="javascript:web_getRect();">web_getRect</button>
-    <button id='web_reshowLastInputMath' onclick="javascript:reshowLastInputMath();">web_reshowLastInputMath</button>
-    <button id='web_getLatex' onclick="javascript:web_getLatex();">web_getLatex</button>
-    <button id='web_undo' onclick="javascript:web_undo();">web_undo</button>
-    <button id='web_redo' onclick="javascript:web_redo();">web_redo</button>
-    <button id='web_clear' onclick="javascript:web_clear();">web_clear</button>
-    <button id='web_changeFocusLeft' onclick="javascript:web_changeFocusLeft();">web_changeFocusLeft</button>
-    <button id='web_changeFocusRight' onclick="javascript:web_changeFocusRight();">web_changeFocusRight</button>
+   <button id='web_showLatex' onclick="javascript:showLatex();">web_showLatex</button>
+   <button id='web_keyboardInsert' onclick="javascript:keyboardInsert();">web_keyboardInsert</button>
+   <button id='web_keyboardDel' onclick="javascript:web_keyboardDel();">web_keyboardDel</button>
+   <button id='web_getRect' onclick="javascript:web_getRect();">web_getRect</button>
+   <button id='web_reshowLastInputMath' onclick="javascript:reshowLastInputMath();">web_reshowLastInputMath</button>
+   <button id='web_getLatex' onclick="javascript:web_getLatex();">web_getLatex</button>
+   <button id='web_undo' onclick="javascript:web_undo();">web_undo</button>
+   <button id='web_redo' onclick="javascript:web_redo();">web_redo</button>
+   <button id='web_clear' onclick="javascript:web_clear();">web_clear</button>
+   <button id='web_changeFocusLeft' onclick="javascript:web_changeFocusLeft();">web_changeFocusLeft</button>
+   <button id='web_changeFocusRight' onclick="javascript:web_changeFocusRight();">web_changeFocusRight</button>
     <script>
         //---测试代码-----------------
         function showLatex() {
             //web_showLatex('f(x,y,\\sqrt{x_1^2}) = 3y^2\\sqrt[3]{x1zx^3} \\left( 3+\\frac{7x+5}{1+y^2} \\right)', true, 3,true);
-            web_showLatex('1+2 13456', 2.1415926, 3.1415926);
+            
             web_setDegreeMode(0);
-            web_setPrecision(0, 3);
+            web_setPrecision(0, 6);
 
+            web_showLatex('\\sqrt{9}',3, 3);
+            web_showLatex('\\sqrt[3]{8}+25', 27, 27);
+            web_showLatex('3^2+5.16', 14.16, 14.16);
+            web_showLatex('1+0.009', 1.009, 1.009);            
+            web_showLatex('3-0.009', 2.991, 2.991);
         }
 
         function reshowLastInputMath() {
