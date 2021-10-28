@@ -129,10 +129,10 @@ var createEquationEditor = function(container) {
                     str = before.getPropertyValue('content');
 
                 if (str && str.indexOf('?') >= 0) {
-                    f = e.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+                    f = e.parentElement.nextElementSibling;
                     e.parentElement.remove();
 
-                    alert(e.latex)
+                    // alert(f)
                 }
 
             }
