@@ -434,24 +434,49 @@ var createEquationEditor = function(container) {
             reshow_math(id, (i == len));
         }
     }
+
+    function delete_last_math() {
+        if (container.childElementCount <= 0)
+            return;
+
+        var math = container.lastElementChild;
+
+        math.remove();
+        _mathInfo.pop();
+        if (container.childElementCount > 0) {
+            _currentInputMath = $(container.lastElementChild).attr('id');
+        } else {
+            _currentInputMath = -1;
+        }
+    }
     //-------------------
 
     //外部函数---------------------
-    var __fistShowId = 0;
+    var __firtShow = true;
     var showMath = function(latex, ratianResult, degreeResult) {
         var tex = complete_formula(latex, degreeResult, ratianResult);
+
+        var firstShow = false;
+        if (__firtShow) {
+            firstShow = true;
+            __firtShow = false;
+        }
 
         MathJax.texReset();
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
-            save_latex_result(latex, ratianResult, degreeResult, node);
-            if (__fistShowId <= 0) {
-                //首次show，找？占位符有问题，要延迟一下
-                __fistShowId = _currentInputMath;
+
+            if (firstShow) {
+                //首次show，找？占位符有问题，要延迟一下 
+                $(node).css('visibility', 'hidden');
+                save_latex_result(latex, ratianResult, degreeResult, node);
+                var fistShowId = _currentInputMath;
                 setTimeout(() => {
-                    change_focus_element(__fistShowId);
+                    change_focus_element(fistShowId);
+                    $(node).css('visibility', 'visible');
                 }, 50);
             } else {
+                save_latex_result(latex, ratianResult, degreeResult, node);
                 change_focus_element(_currentInputMath);
             }
             //$(node).addClass('mathFocus');
