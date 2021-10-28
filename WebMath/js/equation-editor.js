@@ -8,7 +8,6 @@ var createEquationEditor = function(container) {
     //rResult:弧度计算结果,
     //dResult:角度计算结果,
     //node:公式DOM
-    //focus:聚焦的元素,
     //caret:光标类型，0-替换光标当前元素，1-在当前光标后面插入
     //modify:是否修改过 false/true
     //type:公式类型  0-方程式 1-等式
@@ -130,8 +129,10 @@ var createEquationEditor = function(container) {
                     str = before.getPropertyValue('content');
 
                 if (str && str.indexOf('?') >= 0) {
-                    f = e.parentElement.nextElementSibling;
+                    f = e.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
                     e.parentElement.remove();
+
+                    alert(e.latex)
                 }
 
             }
@@ -355,8 +356,12 @@ var createEquationEditor = function(container) {
 
         var index = latex.indexOf('?');
         if (index >= 0) {
+            var str = r.toString();
+            if (r < 0) {
+                str = "("+str+")";
+            }
             //方程式
-            tex = latex.replace('?', '?' + r.toString());
+            tex = latex.replace('?', '?' + str);
         } else {
             //等式
             tex = latex;
