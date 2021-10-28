@@ -346,6 +346,7 @@ var createEquationEditor = function(container) {
     function complete_formula(latex, ratianResult, degreeResult) {
 
         var result = (_degreeMode == 0) ? degreeResult : ratianResult;
+
         var tex = '';
         var r = 0;
         var pow = Math.pow(10, _precision);
@@ -454,7 +455,7 @@ var createEquationEditor = function(container) {
     //外部函数---------------------
     var __firtShow = true;
     var showMath = function(latex, ratianResult, degreeResult) {
-        var tex = complete_formula(latex, degreeResult, ratianResult);
+        var tex = complete_formula(latex, ratianResult, degreeResult);
 
         var firstShow = false;
         if (__firtShow) {
