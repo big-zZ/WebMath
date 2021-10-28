@@ -3,17 +3,40 @@ $(document).ready(function() {
     equationEditor = createEquationEditor(document.getElementById('EquationEditor'));
 });
 
+var mode = 0;
+var value = 0;
+var precision = 3;
+
 //设置值计算方式：（默认角度），如某公式编辑过需确保已经调用了web_reshowLastInputMath
 //@mode 0-角度 1-弧度
-function web_setDegreeMode(mode) {
+function web_setDegreeMode() {
+    if(mode == 0) mode = 1;
+    else mode = 0;
     equationEditor.setDegreeMode(mode);
+}
+
+function web_setValueMethod() {
+    if(value == 0) value = 1;
+    else value = 0;
+    web_setPrecision();
+}
+
+function web_declinePrecision() {
+    precision --;
+    if (precision <= 1) precision = 1;
+    web_setPrecision();
+}
+function web_addPrecision() {
+    precision ++;
+    if (precision >= 6) precision = 6;
+    web_setPrecision();
 }
 
 //设置精度：（默认去尾），如某公式编辑过需确保已经调用了web_reshowLastInputMath
 //@mode 0-去尾 1-四舍五入
 //@precision 小数点后几位
-function web_setPrecision(mode, precision) {
-    equationEditor.setPrecision(mode, precision);
+function web_setPrecision() {
+    equationEditor.setPrecision(value, precision);
 }
 
 //根据latex字符串，渲染公式(异步)
