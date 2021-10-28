@@ -26,7 +26,7 @@ function web_declinePrecision() {
 }
 function web_addPrecision() {
     precision ++;
-    if (precision >= 1) precision = 6;
+    if (precision >= 6) precision = 6;
     web_setPrecision();
 }
 
