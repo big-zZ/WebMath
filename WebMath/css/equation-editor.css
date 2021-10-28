@@ -2,6 +2,9 @@ html,
 body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #F4F6FA;
 }
 
 #EquationEditor {
@@ -9,7 +12,8 @@ body {
     width: 100%;
     position: fixed;
     display: block;
-    margin-top: 50px;
+    left: 0;
+    top: 0;
     background: #F4F6FA;
     color: #333333;
     font-size: 3em;

@@ -450,7 +450,7 @@ var createEquationEditor = function(container) {
                 __fistShowId = _currentInputMath;
                 setTimeout(() => {
                     change_focus_element(__fistShowId);
-                }, 100);
+                }, 50);
             } else {
                 change_focus_element(_currentInputMath);
             }
