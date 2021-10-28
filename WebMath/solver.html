@@ -25,7 +25,7 @@
     <button id='web_undo' onclick="javascript:web_undo();">web_undo</button>
     <button id='web_redo' onclick="javascript:web_redo();">web_redo</button>
     <button id='web_clear' onclick="javascript:web_clear();">web_clear</button>
-    <button id='web_setDegreeMode' onclick="javascript:web_setDegreeMode();">web_setDegreeMode</button>
+    <button id='web_setDegreeRedian' onclick="javascript:web_setDegreeRedian();">web_setDegreeRedian</button>
     <button id='web_setValueMethod' onclick="javascript:web_setValueMethod();">web_setValueMethod</button>
     <button id='web_declinePrecision' onclick="javascript:web_declinePrecision();">web_declinePrecision</button>
     <button id='web_addPrecision' onclick="javascript:web_addPrecision();">web_addPrecision</button>
@@ -97,12 +97,12 @@
             web_setDegreeMode(0);
             web_setPrecision(0, 6);
 
-            web_showLatex('\\sqrt[3]{?}+25=27', 8, 8.000000001);
-            web_showLatex('\\sqrt{9}', 3, 3.333333);
-            web_showLatex('3^2+5.16', 14.16, 14.16777777777);
-            web_showLatex('3-0.009', 2.991, 2.991);
+            // web_showLatex('\\sqrt[3]{?}+25=27', 8, 8.000000001);
+            // web_showLatex('\\sqrt{9}', 3, 3.333333);
+            // web_showLatex('3^2+5.16', 14.16, 14.16777777777);
+            // web_showLatex('3-0.009', 2.991, 2.991);
             web_showLatex('1+?=-2.5666', -3.566666666666666, -3.566666666666666);
-            web_showLatex('sin45', 0.7777771, 0.8888888888);
+            // web_showLatex('sin45', 0.7777771, 0.8888888888);
         }
 
         var __reshow = 0;
