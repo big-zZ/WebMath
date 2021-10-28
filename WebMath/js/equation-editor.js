@@ -164,12 +164,12 @@ var createEquationEditor = function(container) {
 
     function change_focus_element(id, ele) {
 
-        $('#' + id + ' .elementFocus').removeClass('elementFocus');
+        $('#' + id + ' .highlight').removeClass('highlight');
         if (ele) {
             var c = get_element_content(ele);
             _mathInfo[id].caret = (c == '?') ? 0 : 1;
             _mathInfo[id].focus = ele;
-            $(ele).addClass('elementFocus');
+            $(ele).addClass('highlight');
         } else {
             if (_mathInfo[id].type == 0) {
 
@@ -177,15 +177,15 @@ var createEquationEditor = function(container) {
                 _mathInfo[id].caret = 1;
                 var focus = find_and_replace_mark(_mathInfo[id].node.children[0]);
                 focus.forEach(element => {
-                    $(element).addClass('elementFocus');
+                    $(element).addClass('highlight');
                 });
                 _mathInfo[id].focus = focus.pop();
 
             } else {
                 _mathInfo[id].caret = 1;
                 _mathInfo[id].focus = _mathInfo[id].node.firstElementChild.lastElementChild;
-                $(_mathInfo[id].focus).addClass('elementFocus');
-                $(_mathInfo[id].focus.previousElementSibling).addClass('elementFocus'); //=号也高亮                
+                $(_mathInfo[id].focus).addClass('highlight');
+                $(_mathInfo[id].focus.previousElementSibling).addClass('highlight'); //=号也高亮                
             }
 
         }
@@ -584,7 +584,7 @@ var createEquationEditor = function(container) {
         return _mathInfo[_currentInputMath].latex;
     }
     var getRect = function() {
-        var math = container.lastElementChild;
+        var math = _mathInfo[_currentInputMath].node.children[0];
         var left = 0,
             top = 0,
             right = 0,
