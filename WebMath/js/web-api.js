@@ -72,6 +72,19 @@ function web_getRect() {
     return str;
 }
 
+//获取每条公式的显示区域
+//@return 返回数组，元素json字符串，如：{ left: 0, top: 0, right: 100, bottom: 100 }
+function web_getAllRect() {
+    var _allRectStrs = [];
+    var _allRect = equationEditor.getAllRect();
+    _allRect.forEach(element => {
+        var _rectStr = JSON.stringify(element);
+        _allRectStrs[_allRect.indexOf(element)] = _rectStr;
+    });
+    alert("web_getAllRect ->" + _allRectStrs);
+    return _allRectStrs;
+}
+
 //键盘插入当前光标位置
 //@latex 插入的latex字符串 部分数学符号需补充上占位符号？ 如根号 对应latex为\sqrt{?}
 function web_keyboardInsert(latex) {

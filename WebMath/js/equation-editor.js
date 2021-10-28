@@ -624,6 +624,21 @@ var createEquationEditor = function(container) {
 
         return { left: left, top: top, right: right, bottom: bottom };
     }
+
+    var getAllRect = function() {
+        var _allRect = [];
+        var _currentMath = _currentInputMath;
+        _mathInfo.forEach(element => {
+            _currentInputMath = _mathInfo.indexOf(element);
+            var _rect = getRect();
+            _allRect[_currentInputMath] = _rect;
+        });
+        _currentInputMath = _currentMath;
+
+        return _allRect;
+    }
+
+
     var undo = function() {
         if (container.childElementCount <= 0)
             return;
@@ -771,6 +786,7 @@ var createEquationEditor = function(container) {
         insertByPen: insertByPen,
         getLatex: getLatex,
         getRect: getRect,
+        getAllRect: getAllRect,
         undo: undo,
         redo: redo,
         clearAll: clearAll,
