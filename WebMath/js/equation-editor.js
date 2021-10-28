@@ -453,22 +453,21 @@ var createEquationEditor = function(container) {
     //-------------------
 
     //外部函数---------------------
-    var __firtShow = true;
+    var __didContainUnhkonw = false;
+    var __didShow = false;
     var showMath = function(latex, ratianResult, degreeResult) {
         var tex = complete_formula(latex, ratianResult, degreeResult);
-
-        var firstShow = false;
-        if (__firtShow) {
-            firstShow = true;
-            __firtShow = false;
+        
+        if(latex.indexOf("?") >= 0) {
+            __didContainUnhkonw = true;
         }
 
         MathJax.texReset();
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
-
-            if (firstShow) {
-                //首次show，找？占位符有问题，要延迟一下 
+            if (__didContainUnhkonw && !__didShow) {
+                __didShow = true;
+                //首次show有?的latex，找？占位符有问题，要延迟一下 
                 $(node).css('visibility', 'hidden');
                 save_latex_result(latex, ratianResult, degreeResult, node);
                 var fistShowId = _currentInputMath;
