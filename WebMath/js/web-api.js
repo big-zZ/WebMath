@@ -9,7 +9,9 @@ var precision = 3;
 
 //设置值计算方式：（默认角度），如某公式编辑过需确保已经调用了web_reshowLastInputMath
 //@mode 0-角度 1-弧度
-function web_setDegreeMode(mode) {
+function web_setDegreeMode() {
+    if(mode == 0) mode = 1;
+    else mode = 0;
     equationEditor.setDegreeMode(mode);
 }
 
