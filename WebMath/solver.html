@@ -31,64 +31,103 @@
     <button id='web_addPrecision' onclick="javascript:web_addPrecision();">web_addPrecision</button>
     <!-- <button id='web_changeFocusLeft' onclick="javascript:web_changeFocusLeft();">web_changeFocusLeft</button>
     <button id='web_changeFocusRight' onclick="javascript:web_changeFocusRight();">web_changeFocusRight</button> -->
+    <div id='test'></div>
+
     <script>
         //---测试代码-----------------
+        var __test = 1; //关闭测试按钮将值改为0
+        $(document).ready(function() {
+            if (!__test) {
+                return;
+            }
+
+            var btns = `
+            <button id='web_showLatex' onclick="javascript:showLatex();">web_showLatex</button>
+            <button id='web_keyboardInsert' onclick="javascript:keyboardInsert();">web_keyboardInsert</button>
+            <button id='web_keyboardDel' onclick="javascript:web_keyboardDel();">web_keyboardDel</button>
+            <button id='web_getRect' onclick="javascript:web_getRect();">web_getRect</button>
+            <button id='web_reshowLastInputMath' onclick="javascript:reshowLastInputMath();">web_reshowLastInputMath</button>
+            <button id='web_getLatex' onclick="javascript:web_getLatex();">web_getLatex</button>
+            <button id='web_undo' onclick="javascript:web_undo();">web_undo</button>
+            <button id='web_redo' onclick="javascript:web_redo();">web_redo</button>
+            <button id='web_clear' onclick="javascript:web_clear();">web_clear</button>
+            <button id='web_changeFocusLeft' onclick="javascript:web_changeFocusLeft();">web_changeFocusLeft</button>
+            <button id='web_changeFocusRight' onclick="javascript:web_changeFocusRight();">web_changeFocusRight</button>           
+            `
+            $('#EquationEditor').css('margin-top', '50px');
+            $('#test').html(btns);
+
+            var pointerdown = false;
+            var points = [];
+            document.getElementById('EquationEditor').onmousedown = function(e) {
+                e.preventDefault();
+                //equationEditor.insertByPen('\\sqrt[3]{x}',{x:e.pageX,y:e.pageY});
+                var num = web_findNumber(e.pageX, e.pageY);
+                //alert(num);
+                web_setFocus(e.pageX, e.pageY);
+
+                pointerdown = true;
+            };
+            document.getElementById('EquationEditor').onmousemove = function(e) {
+                e.preventDefault();
+                if (pointerdown) {
+                    points.push({
+                        x: e.clientX,
+                        y: e.clientY
+                    });
+                }
+            };
+            document.getElementById('EquationEditor').onmouseup = function(e) {
+                e.preventDefault();
+                if (pointerdown) {
+                    equationEditor.delByPen(points);
+                    points = [];
+                    pointerdown = false;
+                }
+            };
+            // document.body.addEventListener('touchmove', e => {
+            //     //e.preventDefault();
+            // 	e.cancelable = true;
+            // });
+        });
+
         function showLatex() {
             //web_showLatex('f(x,y,\\sqrt{x_1^2}) = 3y^2\\sqrt[3]{x1zx^3} \\left( 3+\\frac{7x+5}{1+y^2} \\right)', true, 3,true);
 
             web_setDegreeMode(0);
             web_setPrecision(0, 6);
 
-            web_showLatex('\\sqrt{9}', 3, 3);
-            web_showLatex('\\sqrt[3]{?}+25=27', 8, 8);
-            web_showLatex('3^2+5.16', 14.16, 14.16);
+            web_showLatex('\\sqrt{9}', 3, 3.333333);
+            web_showLatex('\\sqrt[3]{?}+25=27', 8, 8.000000001);
+            web_showLatex('3^2+5.16', 14.16, 14.16777777777);
             web_showLatex('3-0.009', 2.991, 2.991);
-            web_showLatex('1+?=7', 6, 6);
-            web_showLatex('1+?=-2.5666', -3.5666, -3.5666);
-
+            web_showLatex('1+?=-2.5666', -3.566666666666666, -3.566666666666666);
+            web_showLatex('sin45', 0.7777771, 0.8888888888);
         }
 
+        var __reshow = 0;
+
         function reshowLastInputMath() {
-            web_setDegreeMode(1);
-            web_setPrecision(1, 3);
+            if (__reshow == 0) {
+                web_setDegreeMode(1);
+                web_setPrecision(1, 3);
+                __reshow = 1;
+            } else if (__reshow == 1) {
+                web_setDegreeMode(0);
+                web_setPrecision(0, 6);
+                __reshow = 2;
+            } else if (__reshow == 2) {
+                web_setDegreeMode(1);
+                web_setPrecision(0, 5);
+                __reshow = 0;
+            }
+
             //web_reshowLastInputMath('1+?=3', 2.1415926,3.1415926);				
         }
 
         function keyboardInsert() {
             web_keyboardInsert('87\\sqrt{3}');
         }
-        var pointerdown = false;
-        var points = [];
-        document.getElementById('EquationEditor').onmousedown = function(e) {
-            e.preventDefault();
-            //equationEditor.insertByPen('\\sqrt[3]{x}',{x:e.pageX,y:e.pageY});
-            var num = web_findNumber(e.pageX, e.pageY);
-            //alert(num);
-            web_setFocus(e.pageX, e.pageY);
-
-            pointerdown = true;
-        };
-        document.getElementById('EquationEditor').onmousemove = function(e) {
-            e.preventDefault();
-            if (pointerdown) {
-                points.push({
-                    x: e.clientX,
-                    y: e.clientY
-                });
-            }
-        };
-        document.getElementById('EquationEditor').onmouseup = function(e) {
-            e.preventDefault();
-            if (pointerdown) {
-                equationEditor.delByPen(points);
-                points = [];
-                pointerdown = false;
-            }
-        };
-        // document.body.addEventListener('touchmove', e => {
-        //     //e.preventDefault();
-        // 	e.cancelable = true;
-        // });
     </script>
 </body>
 
