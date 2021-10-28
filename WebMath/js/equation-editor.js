@@ -116,7 +116,7 @@ var createEquationEditor = function(container) {
     //查找问号占位符元素
     function find_and_replace_mark(node) {
 
-        var f;
+        var f = [];
         for (var i = 0; i < node.childElementCount; i++) {
 
             var e = node.children[i];
@@ -129,14 +129,25 @@ var createEquationEditor = function(container) {
                     str = before.getPropertyValue('content');
 
                 if (str && str.indexOf('?') >= 0) {
-                    f = e.parentElement.nextElementSibling;
-                    e.parentElement.remove();
+                    //如果？后面是（），将整个括号内的元素都返回
+                    var loop = false;
+                    var next = e.parentElement;
+                    do {
+                        next = next.nextElementSibling;
+                        f.push(next);
+                        var c = get_element_content(next);
+                        if (c == '(') {
+                            loop = true;
+                        } else if (c == ')') {
+                            loop = false;
+                        }
+                    } while (loop);
 
-                    // alert(f)
+                    e.parentElement.remove();
                 }
 
             }
-            if (f) break;
+            if (f.length > 0) break;
         }
         return f;
     }
@@ -154,29 +165,29 @@ var createEquationEditor = function(container) {
     function change_focus_element(id, ele) {
 
         $('#' + id + ' .elementFocus').removeClass('elementFocus');
-        if (_mathInfo[id].type == 0) {
+        if (ele) {
+            var c = get_element_content(ele);
+            _mathInfo[id].caret = (c == '?') ? 0 : 1;
+            _mathInfo[id].focus = ele;
+            $(ele).addClass('elementFocus');
+        } else {
+            if (_mathInfo[id].type == 0) {
 
-            if (ele) {
-                var c = get_element_content(ele);
-                _mathInfo[id].caret = (c == '?') ? 0 : 1;
-                _mathInfo[id].focus = ele;
-            } else {
                 //方程式，找到？号元素
                 _mathInfo[id].caret = 1;
-                _mathInfo[id].focus = find_and_replace_mark(_mathInfo[id].node.children[0]);
-            }
-            $(_mathInfo[id].focus).addClass('elementFocus');
-        } else {
+                var focus = find_and_replace_mark(_mathInfo[id].node.children[0]);
+                focus.forEach(element => {
+                    $(element).addClass('elementFocus');
+                });
+                _mathInfo[id].focus = focus.pop();
 
-            if (ele) {
-                _mathInfo[id].focus = ele;
-                $(ele).addClass('elementFocus');
             } else {
+                _mathInfo[id].caret = 1;
                 _mathInfo[id].focus = _mathInfo[id].node.firstElementChild.lastElementChild;
                 $(_mathInfo[id].focus).addClass('elementFocus');
-                $(_mathInfo[id].focus.previousElementSibling).addClass('elementFocus'); //=号也高亮 
+                $(_mathInfo[id].focus.previousElementSibling).addClass('elementFocus'); //=号也高亮                
             }
-            _mathInfo[id].caret = 1;
+
         }
     }
 
@@ -358,7 +369,7 @@ var createEquationEditor = function(container) {
         if (index >= 0) {
             var str = r.toString();
             if (r < 0) {
-                str = "("+str+")";
+                str = "(" + str + ")";
             }
             //方程式
             tex = latex.replace('?', '?' + str);
@@ -426,7 +437,7 @@ var createEquationEditor = function(container) {
     //-------------------
 
     //外部函数---------------------
-    var __fistTime = true;
+    var __fistShowId = 0;
     var showMath = function(latex, ratianResult, degreeResult) {
         var tex = complete_formula(latex, degreeResult, ratianResult);
 
@@ -434,12 +445,12 @@ var createEquationEditor = function(container) {
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
 
             save_latex_result(latex, ratianResult, degreeResult, node);
-            if (__fistTime) {
+            if (__fistShowId <= 0) {
                 //首次show，找？占位符有问题，要延迟一下
+                __fistShowId = _currentInputMath;
                 setTimeout(() => {
-                    change_focus_element(_currentInputMath);
+                    change_focus_element(__fistShowId);
                 }, 100);
-                __fistTime = false;
             } else {
                 change_focus_element(_currentInputMath);
             }
