@@ -152,6 +152,23 @@ var createEquationEditor = function(container) {
         return f;
     }
 
+    //查找等号以及右侧的元素
+    function find_equal(node) {
+        var f = [];
+        for (var i = node.childElementCount - 1; i >= 0; i--) {
+            f.push(node.children[i]);
+            var c = get_element_content(node.children[i]);
+
+            var b = encode_latex(node.children[i]);
+
+            console.log('find_equal->'+b)
+
+            if (c && c == '=') break;
+        }
+                
+        return f;
+    }
+    
     function is_number(text) {
         var regPos = /^\d+(\.\d+)?$/; //非负浮点数
         var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
@@ -171,23 +188,19 @@ var createEquationEditor = function(container) {
             _mathInfo[id].focus = ele;
             $(ele).addClass('highlight');
         } else {
+            var focus;
             if (_mathInfo[id].type == 0) {
-
                 //方程式，找到？号元素
-                _mathInfo[id].caret = 1;
-                var focus = find_and_replace_mark(_mathInfo[id].node.children[0]);
-                focus.forEach(element => {
-                    $(element).addClass('highlight');
-                });
-                _mathInfo[id].focus = focus.pop();
-
+                focus = find_and_replace_mark(_mathInfo[id].node.children[0]);
             } else {
-                _mathInfo[id].caret = 1;
-                _mathInfo[id].focus = _mathInfo[id].node.firstElementChild.lastElementChild;
-                $(_mathInfo[id].focus).addClass('highlight');
-                $(_mathInfo[id].focus.previousElementSibling).addClass('highlight'); //=号也高亮                
+                //等式
+                focus = find_equal(_mathInfo[id].node.children[0]);
             }
-
+            _mathInfo[id].caret = 1;
+            focus.forEach(element => {
+                $(element).addClass('highlight');
+            });
+            _mathInfo[id].focus = focus.pop();
         }
     }
 
@@ -346,7 +359,14 @@ var createEquationEditor = function(container) {
     function complete_formula(latex, ratianResult, degreeResult) {
 
         var result = (_degreeMode == 0) ? degreeResult : ratianResult;
-
+        
+        var times = '';
+        var index = result.indexOf('\\times');
+        if(index >= 0) {
+            times = result.substring(index)
+            result = result.substring(0, index);
+        }
+        
         var tex = '';
         var r = 0;
         var pow = Math.pow(10, _precision);
@@ -368,8 +388,8 @@ var createEquationEditor = function(container) {
 
         var index = latex.indexOf('?');
         if (index >= 0) {
-            var str = r.toString();
-            if (r < 0) {
+            var str = r.toString() + times;
+            if (r < 0 || times.length > 0) {
                 str = "(" + str + ")";
             }
             //方程式
@@ -378,7 +398,7 @@ var createEquationEditor = function(container) {
             //等式
             tex = latex;
             tex += '=';
-            tex += r.toString();
+            tex += r.toString() + times;
         }
         return tex;
     }
@@ -454,31 +474,30 @@ var createEquationEditor = function(container) {
 
     //外部函数---------------------
     var __didContainUnhkonw = false;
-    var __didShow = false;
+    var __isFirstTime = true;
     var showMath = function(latex, ratianResult, degreeResult) {
         var tex = complete_formula(latex, ratianResult, degreeResult);
         
-        if(latex.indexOf("?") >= 0) {
-            __didContainUnhkonw = true;
-        }
+    //    if(latex.indexOf("?") >= 0) {
+    //        __didContainUnhkonw = true;
+    //    }
 
         MathJax.texReset();
         MathJax.tex2chtmlPromise(tex, { display: true }).then(function(node) {
-
-            if (__didContainUnhkonw && !__didShow) {
-                __didShow = true;
-                //首次show有?的latex，找？占位符有问题，要延迟一下 
-                $(node).css('visibility', 'hidden');
-                save_latex_result(latex, ratianResult, degreeResult, node);
-                var fistShowId = _currentInputMath;
-                setTimeout(() => {
-                    change_focus_element(fistShowId);
-                    $(node).css('visibility', 'visible');
-                }, 50);
-            } else {
+           if (__isFirstTime) {
+            __isFirstTime = false;
+               //首次show有?的latex，找？占位符有问题，要延迟一下
+               $(node).css('visibility', 'hidden');
+               save_latex_result(latex, ratianResult, degreeResult, node);
+               var fistShowId = _currentInputMath;
+               setTimeout(() => {
+                   change_focus_element(fistShowId);
+                   $(node).css('visibility', 'visible');
+               }, 50);
+           } else {
                 save_latex_result(latex, ratianResult, degreeResult, node);
                 change_focus_element(_currentInputMath);
-            }
+           }
             //$(node).addClass('mathFocus');
             MathJax.startup.document.clear();
             MathJax.startup.document.updateDocument();
@@ -624,21 +643,22 @@ var createEquationEditor = function(container) {
 
         return { left: left, top: top, right: right, bottom: bottom };
     }
-
     var getAllRect = function() {
         var _allRect = [];
         var _currentMath = _currentInputMath;
+        var idx = 0;
         _mathInfo.forEach(element => {
-            _currentInputMath = _mathInfo.indexOf(element);
-            var _rect = getRect();
-            _allRect[_currentInputMath] = _rect;
+            if (element != null) {
+                _currentInputMath = _mathInfo.indexOf(element);
+                var _rect = getRect();
+                _allRect[idx] = _rect;
+                idx ++;
+            }
         });
         _currentInputMath = _currentMath;
-
+        
         return _allRect;
     }
-
-
     var undo = function() {
         if (container.childElementCount <= 0)
             return;
@@ -680,19 +700,20 @@ var createEquationEditor = function(container) {
             _undo.push(id);
         }
         _currentInputMath = -1;
+        _mathInfo = [];
     }
     var findNumber = function(point) {
         var ele = find_child_element_by_point(container, point);
         if (!ele)
             return "";
-
+        
         var content = get_element_content(ele);
         if (!is_number(content))
             return "";
 
         var number = [];
         number.push(content);
-
+        
         //查找前面的
         var sibling = ele;
         while (true) {
@@ -720,8 +741,17 @@ var createEquationEditor = function(container) {
 
             number.push(content);
         }
+        
+//        var arr = [];
+//        for (var i = 0; i < ele.parentElement.childElementCount; i++) {
+//            arr.push(get_element_content(ele.parentElement.children[i]));
+//        }
 
-        return number.join('');
+        var left = get_left(ele),
+        top =  get_top(ele),
+        width = ele.clientWidth;
+
+        return { number: number.join(' '), top: top, left: left, width: width };
     };
     var setFocus = function(point) {
 
@@ -735,7 +765,6 @@ var createEquationEditor = function(container) {
                 _currentInputMath = id;
                 break;
             }
-
         }
 
     };

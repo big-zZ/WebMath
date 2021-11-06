@@ -98,12 +98,14 @@
             web_setDegreeMode(0);
             web_setPrecision(0, 6);
 
-            web_showLatex('\\sqrt[3]{?}+25=27', 8, 8.000000001);
-            web_showLatex('\\sqrt{9}', 3, 3.333333);
-            web_showLatex('3^2+5.16', 14.16, 14.16777777777);
-            web_showLatex('3-0.009', 2.991, 2.991);
-            web_showLatex('1+?=-2.5666', -3.566666666666666, -3.566666666666666);
-            web_showLatex('sin45', 0.7777771, 0.8888888888);
+            // web_showLatex('\\sqrt[3]{?}+25=27', 8, 8.000000001);
+            // web_showLatex('\\sqrt{9}', 3, 3.333333);
+            // web_showLatex('3^2+5.16', 14.16, 14.16777777777);
+            // web_showLatex('3-0.009', 2.991, 2.991);
+            web_showLatex('1+99999', '2 \\times 10^{10}', '2 \\times 10^{10}');
+            // web_showLatex('1+?=-2.5666', '-2 \\times 10^{10}', '-2 \\times 10^{10}');
+            // web_showLatex('sin45', '0.7777771', '0.8888888888');
+            // web_showLatex('1+29999999', '2.345678 \\times 10^{10}', '2.345678 \\times 10^{10}');
         }
 
         var __reshow = 0;
